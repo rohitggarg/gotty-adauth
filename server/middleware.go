@@ -87,11 +87,7 @@ func (server *Server) validADCredential(ad_server_addr string, ad_group string, 
 				}
 			}
 		}
-	} 
-	// if len(userGroups) == 0 {
-	// 	log.Printf("Principal %s is not part of the AD group %s", credential[0], ad_group)
-	// 	return false
-	// }
+	}
 
 	return foundGroup
 }
