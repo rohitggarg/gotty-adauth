@@ -8,10 +8,11 @@ type Options struct {
 	Address             string           `hcl:"address" flagName:"address" flagSName:"a" flagDescribe:"IP address to listen" default:"0.0.0.0"`
 	Port                string           `hcl:"port" flagName:"port" flagSName:"p" flagDescribe:"Port number to liten" default:"8080"`
 	PermitWrite         bool             `hcl:"permit_write" flagName:"permit-write" flagSName:"w" flagDescribe:"Permit clients to write to the TTY (BE CAREFUL)" default:"false"`
-	EnableAdAuth        bool             `hcl:"enable_ad_auth" default:"false"`
-	ADServerAddr        string           `hcl:"ad_server_addr" flagName:"ad_server_addr" flagSName:"ads" flagDescribe:"AD server address for Authentication (ex: ads.azurewebsites.com:389, default disabled)" default:""`
-	ADGroup             string           `hcl:"ad_group" flagName:"ad_group" flagSName:"adg" flagDescribe:"AD group check for Authentication (ex: Everyone, default disabled)" default:""`
-	JWTPrivKey          string           `hcl:"jwt_priv_key" flagName:"jwt-key" flagDescribe:"JWT Private key file. Public key (.pub) must also be present alongside" default:"~/.gotty"`
+	EnableAdAuth        bool             `hcl:"enable_ad_auth" flagName:"adauth" flagSName:"ad" flagDescribe:"Enable AD auth" default:"false"`
+	ADServerAddr        string           `hcl:"ad_server_addr" flagName:"adserver-addr" flagSName:"ads" flagDescribe:"AD server address for Authentication (ex: ads.azurewebsites.com:389, default '')" default:""`
+	ADServerBaseDN      string           `hcl:"ad_server_base_dn" flagName:"adserver-basedn" flagSName:"addn" flagDescribe:"AD server base DN for lookup (ex: OU=Users,DC=example,DC=com, default '')" default:""`
+	ADGroup             string           `hcl:"ad_group" flagName:"adserver-group" flagSName:"adg" flagDescribe:"AD group check for Authentication (ex: Everyone, default '')" default:""`
+	JWTPrivKey          string           `hcl:"jwt_priv_key" flagName:"jwt-key" flagDescribe:"JWT Private key file. Public key (.pub) must also be present alongside" default:"~/.gotty-jwt"`
 	EnableRandomUrl     bool             `hcl:"enable_random_url" flagName:"random-url" flagSName:"r" flagDescribe:"Add a random string to the URL" default:"false"`
 	RandomUrlLength     int              `hcl:"random_url_length" flagName:"random-url-length" flagDescribe:"Random URL length" default:"8"`
 	EnableTLS           bool             `hcl:"enable_tls" flagName:"tls" flagSName:"t" flagDescribe:"Enable TLS/SSL" default:"false"`

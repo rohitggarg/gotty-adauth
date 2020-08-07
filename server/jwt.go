@@ -1,6 +1,7 @@
 package server
 
 import (
+	"log"
 	"crypto/rsa"
 	"os"
 	"io/ioutil"
@@ -15,26 +16,32 @@ func openAndParseKey(jwt_key_file string) {
 		defer jwtPrivKey.Close()
 		if data, err := ioutil.ReadAll(jwtPrivKey); err == nil {
 			if rsaJWTPriv, err = jwt.ParseRSAPrivateKeyFromPEM(data); err != nil {
-				panic("AD auth enabled but can't read JWT Private key!", err)
+				log.Println(err)
+				panic("AD auth enabled but can't read JWT Private key!")
 			}
 		} else {
-			panic("AD auth enabled but can't read JWT Private key!", err)
+			log.Println(err)
+			panic("AD auth enabled but can't read JWT Private key!")
 		}
 	} else {
-		panic("AD auth enabled but can't read JWT Private key!", err)
+		log.Println(err)
+		panic("AD auth enabled but can't read JWT Private key!")
 	}
 
 	if jwtPubKey, err := os.Open(jwt_key_file + ".pub"); err == nil {
 		defer jwtPubKey.Close()
-		if data, err = ioutil.ReadAll(jwtPubKey); err == nil {
+		if data, err := ioutil.ReadAll(jwtPubKey); err == nil {
 			if rsaJWTPub, err = jwt.ParseRSAPublicKeyFromPEM(data); err != nil {
-				panic("AD auth enabled but can't read JWT Public key!", err)
+				log.Println(err)
+				panic("AD auth enabled but can't read JWT Public key!")
 			}
 		} else {
-			panic("AD auth enabled but can't read JWT Public key!", err)
+			log.Println(err)
+			panic("AD auth enabled but can't read JWT Public key!")
 		}
 	} else {
-		panic("AD auth enabled but can't read JWT Public key!", err)
+		log.Println(err)
+		panic("AD auth enabled but can't read JWT Public key!")
 	}
 }
 

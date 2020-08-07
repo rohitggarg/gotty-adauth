@@ -123,7 +123,12 @@ func (server *Server) Run(ctx context.Context, options ...RunOption) error {
 	}
 
 	scheme := "http"
+	var crtFile, keyFile string
 	if server.options.EnableTLS {
+		crtFile = homedir.Expand(server.options.TLSCrtFile)
+		keyFile = homedir.Expand(server.options.TLSKeyFile)
+		log.Printf("TLS crt file: " + crtFile)
+		log.Printf("TLS key file: " + keyFile)
 		scheme = "https"
 	}
 	host, port, _ := net.SplitHostPort(listener.Addr().String())
@@ -137,11 +142,6 @@ func (server *Server) Run(ctx context.Context, options ...RunOption) error {
 	srvErr := make(chan error, 1)
 	go func() {
 		if server.options.EnableTLS {
-			crtFile := homedir.Expand(server.options.TLSCrtFile)
-			keyFile := homedir.Expand(server.options.TLSKeyFile)
-			log.Printf("TLS crt file: " + crtFile)
-			log.Printf("TLS key file: " + keyFile)
-
 			err = srv.ServeTLS(listener, crtFile, keyFile)
 		} else {
 			err = srv.Serve(listener)

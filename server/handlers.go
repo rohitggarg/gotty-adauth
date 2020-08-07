@@ -1,11 +1,13 @@
 package server
 
 import (
+	"encoding/base64"
 	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"log"
+	"strings"
 	"net/http"
 	"net/url"
 	"sync/atomic"
@@ -208,7 +210,7 @@ func (server *Server) handleAuthToken(w http.ResponseWriter, r *http.Request) {
 	token := strings.SplitN(r.Header.Get("Authorization"), " ", 2)
 	if len(token) == 2 && strings.ToLower(token[0]) == "basic" {
 		payload, _ := base64.StdEncoding.DecodeString(token[1])
-		jwt = generateJWT(payload.split(":")[0])
+		jwt = generateJWT(strings.SplitN(string(payload), ":", 2)[0])
 		w.Write([]byte("var gotty_auth_token = '" + jwt + "';"))
 	} else {
 		w.Write([]byte("var gotty_auth_token = 'anonymous';"))
