@@ -8,11 +8,11 @@
 // permit_write = false
 
 // [bool] Enable basic authentication
-// enable_basic_auth = false
+// enable_ad_auth = false
 
 // [string] Default username and password of basic authentication (user:pass)
-//          To enable basic authentication, set `true` to `enable_basic_auth`
-// credential = "user:pass"
+//          To enable basic authentication, set `true` to `enable_ad_auth`
+// ad_server_credential = "user:pass"
 
 // [bool] Enable random URL generation
 // enable_random_url = false

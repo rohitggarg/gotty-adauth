@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	auth "github.com/korylprince/go-ad-auth"
 )
 
 func (server *Server) wrapLogger(handler http.Handler) http.Handler {
@@ -23,7 +24,8 @@ func (server *Server) wrapHeaders(handler http.Handler) http.Handler {
 	})
 }
 
-func (server *Server) wrapBasicAuth(handler http.Handler, credential string) http.Handler {
+func (server *Server) wrapAdAuth(handler http.Handler, ad_server_addr string, ad_group string) http.Handler {
+	
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token := strings.SplitN(r.Header.Get("Authorization"), " ", 2)
 
@@ -39,7 +41,7 @@ func (server *Server) wrapBasicAuth(handler http.Handler, credential string) htt
 			return
 		}
 
-		if credential != string(payload) {
+		if !validADCredential(ad_server_addr, ad_group, payload) {
 			w.Header().Set("WWW-Authenticate", `Basic realm="GoTTY"`)
 			http.Error(w, "authorization failed", http.StatusUnauthorized)
 			return
@@ -48,4 +50,8 @@ func (server *Server) wrapBasicAuth(handler http.Handler, credential string) htt
 		log.Printf("Basic Authentication Succeeded: %s", r.RemoteAddr)
 		handler.ServeHTTP(w, r)
 	})
+}
+
+func validADCredential(ad_server_addr string, ad_group string, payload string) bool {
+	return true
 }

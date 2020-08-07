@@ -196,9 +196,11 @@ func (server *Server) setupHandlers(ctx context.Context, cancel context.CancelFu
 
 	siteHandler := http.Handler(siteMux)
 
-	if server.options.EnableBasicAuth {
-		log.Printf("Using Basic Authentication")
-		siteHandler = server.wrapBasicAuth(siteHandler, server.options.Credential)
+	if server.options.EnableAdAuth {
+		jwtKeyFilePath := homedir.Expand(server.options.JWTPrivKey)
+		openAndParseKey(jwtKeyFilePath)
+		log.Printf("Using AD Authentication")
+		siteHandler = server.wrapAdAuth(siteHandler, server.options.ADServerAddr, server.options.ADGroup)
 	}
 
 	withGz := gziphandler.GzipHandler(server.wrapHeaders(siteHandler))

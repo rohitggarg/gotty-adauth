@@ -13,7 +13,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/pkg/errors"
 
-	"github.com/yudai/gotty/webtty"
+	"github.com/rohitggarg/gotty-adauth/webtty"
 )
 
 func (server *Server) generateHandleWS(ctx context.Context, cancel context.CancelFunc, counter *counter) http.HandlerFunc {
@@ -101,7 +101,8 @@ func (server *Server) processWSConn(ctx context.Context, conn *websocket.Conn) e
 	if err != nil {
 		return errors.Wrapf(err, "failed to authenticate websocket connection")
 	}
-	if init.AuthToken != server.options.Credential {
+
+	if server.options.EnableAdAuth && !validJWT(init.AuthToken) {
 		return errors.New("failed to authenticate websocket connection")
 	}
 
@@ -202,8 +203,16 @@ func (server *Server) handleIndex(w http.ResponseWriter, r *http.Request) {
 
 func (server *Server) handleAuthToken(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/javascript")
-	// @TODO hashing?
-	w.Write([]byte("var gotty_auth_token = '" + server.options.Credential + "';"))
+	var jwt string
+
+	token := strings.SplitN(r.Header.Get("Authorization"), " ", 2)
+	if len(token) == 2 && strings.ToLower(token[0]) == "basic" {
+		payload, _ := base64.StdEncoding.DecodeString(token[1])
+		jwt = generateJWT(payload.split(":")[0])
+		w.Write([]byte("var gotty_auth_token = '" + jwt + "';"))
+	} else {
+		w.Write([]byte("var gotty_auth_token = 'anonymous';"))
+	}
 }
 
 func (server *Server) handleConfig(w http.ResponseWriter, r *http.Request) {
